@@ -43,7 +43,7 @@ from typing import List, Optional
 from urllib.parse import urlencode
 
 from config import CITIES, CITY_ALIASES
-from scrapers.base import fetch, fmt_date
+from scrapers.base import fetch, fmt_date, build_location
 
 MAX_EVENTS_PER_CITY    = 10
 MAX_EVENTS_PER_KEYWORD = 5
@@ -154,21 +154,11 @@ def _parse_event(item: dict, city: dict, fallback_url: str) -> Optional[dict]:
     venue_city = addr.get("addressLocality", "").strip()
     canonical_city = CITY_ALIASES.get(venue_city.lower()) or city["label"]
 
-    if loc_name and venue_city and loc_name != venue_city:
-        location_str = f"{loc_name}, {venue_city}"
-    else:
-        location_str = venue_city or city["label"]
+    location_str = build_location(loc_name, venue_city, city["label"])
 
     img = item.get("image", "") or ""
     if isinstance(img, list):
         img = img[0] if img else ""
-
-    geo = loc.get("geo") or {}
-    try:
-        lat = float(geo.get("latitude") or 0) or None
-        lng = float(geo.get("longitude") or 0) or None
-    except (TypeError, ValueError):
-        lat = lng = None
 
     return {
         "title": name,
@@ -180,6 +170,4 @@ def _parse_event(item: dict, city: dict, fallback_url: str) -> Optional[dict]:
         "description": item.get("description", ""),
         "source": "Eventbrite",
         "city": canonical_city,
-        "lat": lat,
-        "lng": lng,
     }

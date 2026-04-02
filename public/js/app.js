@@ -6,7 +6,7 @@
 import { detectCategory, formatTimestamp } from './utils.js';
 import {
   renderGrid, renderNoResults, renderEmpty,
-  renderLoading, renderError, renderCategoryFilters,
+  renderError, renderCategoryFilters,
 } from './render.js';
 import { initGlitter } from './glitter.js';
 
@@ -64,13 +64,6 @@ function refreshFilters() {
 function setStatus(state) {
   document.getElementById('statusDot').className =
     'status-dot' + (state === 'loading' ? ' loading' : state === 'error' ? ' error' : '');
-}
-
-function showToast(msg, type = 'success') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `toast ${type} show`;
-  setTimeout(() => { el.className = 'toast'; }, 3500);
 }
 
 // ---------------------------------------------------------------------------

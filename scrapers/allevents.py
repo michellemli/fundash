@@ -42,7 +42,7 @@ import sys
 from typing import List, Optional
 
 from config import CITIES, CITY_ALIASES
-from scrapers.base import fetch, fmt_date
+from scrapers.base import fetch, fmt_date, build_location
 
 MAX_EVENTS_PER_PAGE = 12
 
@@ -105,10 +105,7 @@ def _parse_event(item: dict, default_city: str, fallback_url: str) -> Optional[d
     venue_city = (addr.get("addressLocality") or "").strip()
     canonical_city = CITY_ALIASES.get(venue_city.lower()) or default_city
 
-    location_str = (
-        f"{loc_name}, {venue_city}" if loc_name and venue_city and loc_name != venue_city
-        else venue_city or default_city
-    )
+    location_str = build_location(loc_name, venue_city, default_city)
 
     img = item.get("image") or ""
     if isinstance(img, list):

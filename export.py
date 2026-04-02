@@ -9,6 +9,7 @@ Returns the path of the written file (relative to the project root).
 
 import csv
 import os
+import re
 from datetime import datetime
 
 EXPORT_DIR = os.path.join(os.path.dirname(__file__), "exports")
@@ -18,7 +19,6 @@ COLUMNS = ["Title", "Date", "City", "Location", "Category", "Source", "Link"]
 
 def _detect_category(event: dict) -> str:
     """Keyword categorisation matching the frontend detectCategory logic."""
-    import re
     text = (event.get("title", "") + " " + event.get("description", "") + " " + event.get("location", "")).lower()
     if re.search(r"yoga|meditat|mindful|sound bath|breathwork|spa|wellness|reiki|pilates|stretch|relax|self.care|journaling", text):
         return "Wellness"

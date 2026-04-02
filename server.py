@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-Local Pulse — events dashboard HTTP server.
+Girls Just Want to Unwind — events dashboard HTTP server.
 
-Serves the static frontend from public/ and exposes two API endpoints:
+Serves the static frontend from public/ and exposes one API endpoint:
 
-    GET  /api/events         — return events (from cache if fresh)
-    POST /api/events/refresh — bust cache and re-scrape immediately
+    GET /api/events — return events (from cache if fresh)
 
 Run:
     python3 server.py
@@ -17,14 +16,15 @@ Requires:
 import json
 import os
 import sys
+import time
 import threading
 from datetime import datetime, date, timedelta
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
 
 from config import PORT
 from export import export_csv
-from scrapers import scrape_all, invalidate_cache, cache_info
+from scrapers import scrape_all, invalidate_cache
 
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "exports", ".last_refresh")
 
@@ -48,9 +48,13 @@ def _do_daily_refresh():
     print(f"[scheduler] Daily refresh started at {datetime.now().strftime('%H:%M:%S')}")
     invalidate_cache()
     events = scrape_all()
-    path = export_csv(events)
-    _write_last_refresh_date(date.today())
-    print(f"[scheduler] Done — {len(events)} events → {path}")
+    try:
+        path = export_csv(events)
+        _write_last_refresh_date(date.today())
+        print(f"[scheduler] Done — {len(events)} events → {path}")
+    except OSError as e:
+        # Ephemeral filesystem (e.g. Railway) — skip CSV export, continue normally
+        print(f"[scheduler] Done — {len(events)} events (CSV export skipped: {e})")
 
 
 def _seconds_until_midnight():
@@ -63,13 +67,9 @@ def _schedule_loop():
     """Run daily refresh now if needed, then repeat every day at midnight."""
     if _read_last_refresh_date() != date.today():
         _do_daily_refresh()
-    # Sleep until next midnight, then loop
     while True:
-        time.sleep(_seconds_until_midnight() + 5)  # +5s past midnight
+        time.sleep(_seconds_until_midnight() + 5)
         _do_daily_refresh()
-
-
-import time  # noqa: E402 (after the functions that reference it)
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -91,23 +91,17 @@ class Handler(SimpleHTTPRequestHandler):
     # API routes
     # ------------------------------------------------------------------
     def do_GET(self):
-        if urlparse(self.path).path == "/api/events":
+        path = urlparse(self.path).path
+        if path == "/api/events":
             events = scrape_all()
             self._send_json({
                 "events": events,
                 "scraped_at": datetime.utcnow().isoformat() + "Z",
-                "cache": cache_info(),
             })
+        elif path == "/health":
+            self._send_json({"status": "ok"})
         else:
             super().do_GET()
-
-    def do_POST(self):
-        self._send_json({"error": "Not found"}, status=404)
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._cors_headers()
-        self.end_headers()
 
     # ------------------------------------------------------------------
     # Helpers
@@ -137,7 +131,7 @@ if __name__ == "__main__":
     t = threading.Thread(target=_schedule_loop, daemon=True)
     t.start()
 
-    httpd = HTTPServer(("0.0.0.0", PORT), Handler)
+    httpd = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print(f"Girls Just Want to Unwind → http://localhost:{PORT}")
     print("Ctrl+C to stop.\n")
     try:

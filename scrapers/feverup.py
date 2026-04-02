@@ -38,7 +38,7 @@ import threading
 from typing import List, Optional
 
 from config import CITY_ALIASES
-from scrapers.base import fetch, fmt_date
+from scrapers.base import fetch, fmt_date, build_location
 
 MAX_EVENTS = 8
 
@@ -144,10 +144,7 @@ def _parse_plan(html: str, default_city: str, fallback_url: str) -> Optional[dic
         img = m_img.group(1)
 
     canonical_city = CITY_ALIASES.get(venue_city.lower()) or default_city
-    if venue_name and venue_city and venue_name != venue_city:
-        location_str = f"{venue_name}, {venue_city}"
-    else:
-        location_str = venue_city or default_city
+    location_str = build_location(venue_name, venue_city, default_city)
 
     return {
         "title": name,

@@ -14,7 +14,7 @@ import threading
 from datetime import datetime
 
 from cache import Cache
-from typing import List, Optional
+from typing import List
 from config import CITIES, CACHE_TTL
 from scrapers import eventbrite, meetup, luma, allevents, feverup, yelp, ra
 
@@ -38,7 +38,7 @@ def scrape_all() -> List[dict]:
         return cached
 
     print("Scraping live events…")
-    results = []  # type: List[dict]
+    results: List[dict] = []
     lock = threading.Lock()
 
     def run(fn, *args):

@@ -40,10 +40,10 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from config import CITY_ALIASES
-from scrapers.base import fetch, fmt_date
+from scrapers.base import fetch, fmt_date, build_location
 
 try:
-    import requests as _requests
+    import requests
     HAS_REQUESTS = True
 except ImportError:
     HAS_REQUESTS = False
@@ -100,7 +100,7 @@ def scrape(city_key: str) -> List[dict]:
     query = _QUERY % (area_id, today, MAX_EVENTS)
 
     try:
-        resp = _requests.post(
+        resp = requests.post(
             GRAPHQL_URL,
             json={"query": query},
             headers={
@@ -140,10 +140,7 @@ def _parse_listing(listing: dict, city_key: str) -> Optional[dict]:
     venue_name = (ev.get("venue") or {}).get("name", "")
     canonical_city = CITY_ALIASES.get(area_name.lower()) or area_name
 
-    if venue_name and area_name and venue_name != area_name:
-        location_str = f"{venue_name}, {area_name}"
-    else:
-        location_str = area_name or venue_name
+    location_str = build_location(venue_name, area_name, area_name or venue_name)
 
     content_url = ev.get("contentUrl") or ""
     link = f"https://ra.co{content_url}" if content_url else "https://ra.co"

@@ -35,6 +35,16 @@ def fetch(url: str, timeout: int = 12) -> Optional[str]:
         return None
 
 
+def build_location(venue: str, city: str, fallback: str) -> str:
+    """
+    Return a human-readable location string.
+    Produces "Venue, City" when both differ, otherwise city or fallback.
+    """
+    if venue and city and venue != city:
+        return f"{venue}, {city}"
+    return city or fallback
+
+
 def fmt_date(iso_str: str) -> str:
     """
     Convert an ISO 8601 date/datetime string to a human-readable label.

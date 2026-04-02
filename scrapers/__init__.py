@@ -11,7 +11,7 @@ Adding a new scraper:
 """
 
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 
 from cache import Cache
 from typing import List
@@ -90,7 +90,6 @@ def scraped_at() -> str:
     ts = _cache.scraped_at()
     if not ts:
         return ""
-    from datetime import datetime, timezone
     return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
 
 

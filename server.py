@@ -8,14 +8,10 @@ Serves the static frontend from public/ and exposes one API endpoint:
 
 Run:
     python3 server.py
-
-Requires:
-    pip install requests beautifulsoup4
 """
 
 import json
 import os
-import sys
 import time
 import threading
 from datetime import datetime, date, timedelta
@@ -123,13 +119,6 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    try:
-        import requests  # noqa: F401
-        from bs4 import BeautifulSoup  # noqa: F401
-    except ImportError:
-        print("Missing dependencies. Run:  pip3 install requests beautifulsoup4\n")
-        sys.exit(1)
-
     t = threading.Thread(target=_schedule_loop, daemon=True)
     t.start()
 

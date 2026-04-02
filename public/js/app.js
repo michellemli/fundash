@@ -16,8 +16,8 @@ import { initGlitter } from './glitter.js';
 let allEvents      = [];
 let activeCity     = 'all';
 let activeCategory = 'all';
-let dateFrom       = null;   // "YYYY-MM-DD" or null
-let dateTo         = null;   // "YYYY-MM-DD" or null
+let dateFrom       = null;
+let dateTo         = null;
 
 // ---------------------------------------------------------------------------
 // Filtering
@@ -27,8 +27,7 @@ function filteredEvents() {
     const cityOk = activeCity === 'all' || e.city === activeCity;
     const catOk  = activeCategory === 'all' || detectCategory(e) === activeCategory;
     const iso    = (e.date_iso || '').substring(0, 10);
-    const dateOk = (!dateFrom && !dateTo) || !iso
-      || ((!dateFrom || iso >= dateFrom) && (!dateTo || iso <= dateTo));
+    const dateOk = !iso || ((!dateFrom || iso >= dateFrom) && (!dateTo || iso <= dateTo));
     return cityOk && catOk && dateOk;
   });
 }

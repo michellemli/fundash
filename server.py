@@ -18,7 +18,8 @@ import os
 import sys
 import time
 import threading
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
+UTC = timezone.utc
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
 
@@ -96,7 +97,7 @@ class Handler(SimpleHTTPRequestHandler):
             events = scrape_all()
             self._send_json({
                 "events": events,
-                "scraped_at": datetime.utcnow().isoformat() + "Z",
+                "scraped_at": datetime.now(UTC).isoformat(),
             })
         elif path == "/health":
             self._send_json({"status": "ok"})

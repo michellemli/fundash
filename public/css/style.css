@@ -215,6 +215,55 @@ header {
 .event-count        { font-size: 0.8rem; color: var(--text-muted); }
 .event-count strong { color: var(--text); }
 
+.controls-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 8px;
+}
+
+.date-range {
+  display: flex; align-items: center;
+  gap: 6px;
+}
+
+.date-range-label {
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.date-range-sep { font-size: 0.8rem; color: var(--text-muted); }
+
+.date-input {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 5px 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color-scheme: dark;
+}
+.date-input:focus,
+.date-input:hover { border-color: var(--accent); }
+.date-input:focus { box-shadow: 0 0 0 3px rgba(255,45,120,0.1); }
+
+.date-clear {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.65rem;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.date-clear:hover { border-color: var(--accent); color: var(--text); }
+
 .category-filters { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .cat-btn {
@@ -565,4 +614,6 @@ footer a:hover { text-decoration: underline; }
   .controls,
   .grid-container { padding-left: 1rem; padding-right: 1rem; }
   .tagline { display: none; }
+  .controls-right { align-items: flex-start; }
+  .date-range { flex-wrap: wrap; }
 }

@@ -13,9 +13,11 @@ import { initGlitter } from './glitter.js';
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
-let allEvents    = [];
-let activeCity   = 'all';
+let allEvents      = [];
+let activeCity     = 'all';
 let activeCategory = 'all';
+let dateFrom       = null;   // "YYYY-MM-DD" or null
+let dateTo         = null;   // "YYYY-MM-DD" or null
 
 // ---------------------------------------------------------------------------
 // Filtering
@@ -24,7 +26,10 @@ function filteredEvents() {
   return allEvents.filter(e => {
     const cityOk = activeCity === 'all' || e.city === activeCity;
     const catOk  = activeCategory === 'all' || detectCategory(e) === activeCategory;
-    return cityOk && catOk;
+    const iso    = (e.date_iso || '').substring(0, 10);
+    const dateOk = (!dateFrom && !dateTo) || !iso
+      || ((!dateFrom || iso >= dateFrom) && (!dateTo || iso <= dateTo));
+    return cityOk && catOk && dateOk;
   });
 }
 
@@ -107,10 +112,35 @@ function initCityPills() {
 }
 
 // ---------------------------------------------------------------------------
+// Date range filter wiring
+// ---------------------------------------------------------------------------
+function initDateFilter() {
+  const fromEl  = document.getElementById('dateFrom');
+  const toEl    = document.getElementById('dateTo');
+  const clearEl = document.getElementById('clearDates');
+
+  function updateDates() {
+    dateFrom = fromEl.value || null;
+    dateTo   = toEl.value   || null;
+    clearEl.hidden = !dateFrom && !dateTo;
+    renderEvents();
+  }
+
+  fromEl.addEventListener('change', updateDates);
+  toEl.addEventListener('change', updateDates);
+  clearEl.addEventListener('click', () => {
+    fromEl.value = '';
+    toEl.value   = '';
+    updateDates();
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   initGlitter();
   initCityPills();
+  initDateFilter();
   loadEvents();
 });

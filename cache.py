@@ -43,6 +43,11 @@ class Cache:
             self._data = None
             self._ts = 0.0
 
+    def scraped_at(self) -> float:
+        """Return the Unix timestamp when the cache was last populated, or 0."""
+        with self._lock:
+            return self._ts
+
     def age_seconds(self) -> float:
         with self._lock:
             return time.time() - self._ts if self._ts else float("inf")

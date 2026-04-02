@@ -18,14 +18,13 @@ import os
 import sys
 import time
 import threading
-from datetime import datetime, date, timedelta, timezone
-UTC = timezone.utc
+from datetime import datetime, date, timedelta
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
 
 from config import PORT
 from export import export_csv
-from scrapers import scrape_all, get_cached, invalidate_cache
+from scrapers import scrape_all, get_cached, scraped_at, invalidate_cache
 
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "exports", ".last_refresh")
 
@@ -96,7 +95,7 @@ class Handler(SimpleHTTPRequestHandler):
         if path == "/api/events":
             self._send_json({
                 "events": get_cached(),
-                "scraped_at": datetime.now(UTC).isoformat(),
+                "scraped_at": scraped_at(),
             })
         elif path == "/health":
             self._send_json({"status": "ok"})

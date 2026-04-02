@@ -85,6 +85,15 @@ def get_cached() -> List[dict]:
     return _cache.get() or []
 
 
+def scraped_at() -> str:
+    """Return the ISO timestamp when the cache was last populated, or empty string."""
+    ts = _cache.scraped_at()
+    if not ts:
+        return ""
+    from datetime import datetime, timezone
+    return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
+
+
 def invalidate_cache() -> None:
     _cache.invalidate()
 

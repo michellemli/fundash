@@ -37,6 +37,7 @@ export function detectCategory(event) {
 
 /** Format an ISO timestamp for display in the header. */
 export function formatTimestamp(isoStr) {
+  if (!isoStr) return '—';
   return 'Updated ' + new Date(isoStr).toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit',
   });

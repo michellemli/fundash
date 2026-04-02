@@ -18,18 +18,20 @@ import time
 
 
 class Cache:
-    def __init__(self, ttl: int):
-        self._ttl = ttl
+    def __init__(self, ttl=None):
+        self._ttl = ttl  # None means never expire
         self._data = None
         self._ts = 0.0
         self._lock = threading.Lock()
 
     def get(self):
-        """Return cached data if still fresh, else None."""
+        """Return cached data if present and fresh, else None."""
         with self._lock:
-            if self._data is not None and time.time() - self._ts < self._ttl:
-                return self._data
-            return None
+            if self._data is None:
+                return None
+            if self._ttl is not None and time.time() - self._ts >= self._ttl:
+                return None
+            return self._data
 
     def set(self, data) -> None:
         with self._lock:

@@ -11,7 +11,6 @@ To add a new city:
 
 import os
 PORT = int(os.environ.get("PORT", 3456))
-CACHE_TTL = 300  # seconds — how long scraped results are reused before a live refresh
 
 HTTP_HEADERS = {
     "User-Agent": (

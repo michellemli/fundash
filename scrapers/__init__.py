@@ -15,10 +15,10 @@ from datetime import datetime
 
 from cache import Cache
 from typing import List
-from config import CITIES, CACHE_TTL
+from config import CITIES
 from scrapers import eventbrite, meetup, luma, allevents, feverup, yelp, ra
 
-_cache = Cache(ttl=CACHE_TTL)
+_cache = Cache()  # no TTL — scheduler is the only thing that refreshes
 
 # City display order in the sorted output
 _CITY_ORDER = {label: i for i, label in enumerate([
@@ -80,12 +80,13 @@ def scrape_all() -> List[dict]:
     return unique
 
 
+def get_cached() -> List[dict]:
+    """Return cached events without triggering a scrape. Returns [] if cache is empty."""
+    return _cache.get() or []
+
+
 def invalidate_cache() -> None:
     _cache.invalidate()
-
-
-def cache_info() -> dict:
-    return {"age_seconds": round(_cache.age_seconds()), "is_fresh": _cache.is_fresh}
 
 
 # ---------------------------------------------------------------------------

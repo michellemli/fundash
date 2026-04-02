@@ -60,9 +60,50 @@
 </div>
 
 <script type="module" src="/js/app.js"></script>
+<script type="module" src="/js/issue-modal.js"></script>
+
+<!-- ── Report Issue Modal ──────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="issueModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="issueModalTitle" hidden>
+  <div class="modal">
+    <button class="modal-close" id="issueModalClose" aria-label="Close">✕</button>
+    <div class="modal-icon">🐛</div>
+    <h2 class="modal-title" id="issueModalTitle">Report a Problem</h2>
+    <p class="modal-subtitle">Spotted a missing event, broken link, or have a suggestion? Let us know! We'll take you to GitHub to finish submitting — no experience needed.</p>
+
+    <form id="issueForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="issueType">What's going on?</label>
+        <select class="form-select" id="issueType" required>
+          <option value="" disabled selected>Pick one…</option>
+          <option value="missing-event">🗓️ Missing event I'd like to see</option>
+          <option value="wrong-info">✏️ Event has wrong info (date, location, etc.)</option>
+          <option value="broken-link">🔗 Broken or incorrect link</option>
+          <option value="suggestion">💡 Suggestion or feature idea</option>
+          <option value="other">💬 Something else</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="issueSummary">Brief summary <span class="form-required">*</span></label>
+        <input class="form-input" type="text" id="issueSummary" placeholder="e.g. Paint & sip night in Boston isn't showing up" maxlength="120" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="issueDetails">More details <span class="form-optional">(optional)</span></label>
+        <textarea class="form-textarea" id="issueDetails" rows="4" placeholder="Any extra context — event URL, date, city, etc."></textarea>
+      </div>
+
+      <p class="form-hint">✨ Clicking "Continue" will open GitHub in a new tab with your report already filled in. You'll just need to click "Submit" there — it's free and takes 30 seconds to sign up if you don't have an account yet.</p>
+
+      <button class="form-submit" type="submit">Continue to GitHub →</button>
+    </form>
+  </div>
+</div>
 
 <footer>
   <a href="https://michellemli.com" target="_blank" rel="noopener noreferrer">michellemli.com</a>
+  <span class="footer-sep">·</span>
+  <button class="footer-issue-btn" id="openIssueModal">Report a Problem</button>
 </footer>
 </body>
 </html>

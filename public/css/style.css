@@ -400,6 +400,19 @@ header, .hero, .controls, .grid-container { position: relative; z-index: 1; }
 }
 
 
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted, #888);
+  font-size: 0.85rem;
+}
+footer a {
+  color: var(--accent, #e91e8c);
+  text-decoration: none;
+}
+footer a:hover { text-decoration: underline; }
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   header { padding: 0 1rem; }

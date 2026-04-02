@@ -16,8 +16,10 @@ import { initGlitter } from './glitter.js';
 let allEvents      = [];
 let activeCity     = 'all';
 let activeCategory = 'all';
-let dateFrom       = null;
-let dateTo         = null;
+let dateFrom          = null;
+let dateTo            = null;
+let defaultDateFrom   = null;
+let defaultDateTo     = null;
 
 // ---------------------------------------------------------------------------
 // Filtering
@@ -85,6 +87,7 @@ async function loadEvents() {
     document.getElementById('lastUpdated').textContent =
       formatTimestamp(data.scraped_at);
 
+    setDefaultDateRange();
     refreshFilters();
     renderEvents();
     setStatus('ok');
@@ -111,6 +114,29 @@ function initCityPills() {
 }
 
 // ---------------------------------------------------------------------------
+// Date range defaults (called after allEvents is populated)
+// ---------------------------------------------------------------------------
+function setDefaultDateRange() {
+  const fromEl  = document.getElementById('dateFrom');
+  const toEl    = document.getElementById('dateTo');
+  const clearEl = document.getElementById('clearDates');
+
+  const today   = new Date().toLocaleDateString('en-CA');
+  const maxDate = allEvents.reduce((max, e) => {
+    const d = (e.date_iso || '').substring(0, 10);
+    return d && d > max ? d : max;
+  }, '');
+
+  defaultDateFrom = today;
+  defaultDateTo   = maxDate || null;
+  dateFrom        = defaultDateFrom;
+  dateTo          = defaultDateTo;
+  fromEl.value    = today;
+  toEl.value      = maxDate;
+  clearEl.hidden  = !dateFrom && !dateTo;
+}
+
+// ---------------------------------------------------------------------------
 // Date range filter wiring
 // ---------------------------------------------------------------------------
 function initDateFilter() {
@@ -121,6 +147,8 @@ function initDateFilter() {
   function updateDates() {
     dateFrom = fromEl.value || null;
     dateTo   = toEl.value   || null;
+    fromEl.classList.toggle('has-value', !!dateFrom && dateFrom !== defaultDateFrom);
+    toEl.classList.toggle('has-value', !!dateTo && dateTo !== defaultDateTo);
     clearEl.hidden = !dateFrom && !dateTo;
     renderEvents();
   }

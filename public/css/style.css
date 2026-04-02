@@ -234,7 +234,8 @@ header {
   background: var(--surface2);
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  color: var(--text);
+  color: var(--text-muted);
+  -webkit-text-fill-color: var(--text-muted);
   font-family: inherit;
   font-size: 0.75rem;
   padding: 5px 8px;
@@ -245,6 +246,7 @@ header {
 }
 .date-input:focus,
 .date-input:hover { border-color: var(--accent); }
+.date-input.has-value { background: rgba(255,45,120,0.15); border-color: var(--accent); color: var(--text); -webkit-text-fill-color: var(--text); }
 .date-input:focus { box-shadow: 0 0 0 3px rgba(255,45,120,0.1); }
 
 .date-clear {
